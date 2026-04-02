@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Uz Reja</title>
+  <!-- Offline: Google Fonts yuklanmaydi. CSS fallback ishlaydi. -->
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div class="app">
+    <aside class="sidebar">
+      <div class="logo">
+        <div class="logo-mark">UP</div>
+        <div>
+          <div class="logo-title">Uz Reja</div>
+          <div class="logo-sub">Premium rejalashtirish</div>
+        </div>
+      </div>
+
+      <nav class="nav">
+        <button class="nav-item active" data-section="dashboard">Boshqaruv</button>
+        <button class="nav-item" data-section="planner">Reja</button>
+        <button class="nav-item" data-section="habits">Odatlar</button>
+        <button class="nav-item" data-section="analytics">Analitika</button>
+        <button class="nav-item" data-section="settings">Sozlamalar</button>
+      </nav>
+
+      <div class="sidebar-footer">
+        <div class="glass-card mini">
+          <div class="label">Bugun</div>
+          <div class="value" id="todayDate">-</div>
+          <div class="sub" id="liveClock">-</div>
+        </div>
+      </div>
+    </aside>
+
+    <main class="content">
+      <header class="topbar">
+        <div>
+          <h1>Assalomu alaykum!</h1>
+          <p>Bugungi ishlaringizni chiroyli boshqaring.</p>
+        </div>
+        <div class="top-actions">
+          <div class="search">
+            <input type="text" id="searchInput" placeholder="Vazifa qidirish..." />
+          </div>
+          <div class="view-switch">
+            <button class="chip active" data-view="day">Kunlik</button>
+            <button class="chip" data-view="week">Haftalik</button>
+            <button class="chip" data-view="month">Oylik</button>
+          </div>
+        </div>
+      </header>
+
+      <section class="grid" id="dashboard">
+        <div class="panel wide">
+          <div class="panel-header">
+            <div>
+              <h2>Vazifalar</h2>
+              <p>Reja va progress nazorati</p>
+            </div>
+            <button class="primary" id="openTaskModal">+ Yangi vazifa</button>
+          </div>
+          <div class="task-list" id="taskList"></div>
+        </div>
+
+        <div class="panel">
+          <div class="panel-header">
+            <div>
+              <h2>Rivojlanish</h2>
+              <p>Kun/hafta/oy bo'yicha</p>
+            </div>
+          </div>
+          <div class="progress-group">
+            <div class="progress-item">
+              <div class="progress-meta">
+                <span>Kunlik</span>
+                <span id="dailyRivojlanishText">0%</span>
+              </div>
+              <div class="progress-bar"><span id="dailyRivojlanish"></span></div>
+            </div>
+            <div class="progress-item">
+              <div class="progress-meta">
+                <span>Haftalik</span>
+                <span id="weeklyRivojlanishText">0%</span>
+              </div>
+              <div class="progress-bar"><span id="weeklyRivojlanish"></span></div>
+            </div>
+            <div class="progress-item">
+              <div class="progress-meta">
+                <span>Oylik</span>
+                <span id="monthlyRivojlanishText">0%</span>
+              </div>
+              <div class="progress-bar"><span id="monthlyRivojlanish"></span></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="panel">
+          <div class="panel-header">
+            <div>
+              <h2>Statistika</h2>
+              <p>Umumiy ko'rsatkichlar</p>
+            </div>
+          </div>
+          <div class="stats">
+            <div class="stat-card">
+              <div class="label">Bajarilgan</div>
+              <div class="value" id="statsDone">0</div>
+            </div>
+            <div class="stat-card">
+              <div class="label">Samaradorlik</div>
+              <div class="value" id="statsEfficiency">0%</div>
+            </div>
+          </div>
+          <canvas id="statusChart" height="200"></canvas>
+        </div>
+
+        <div class="panel">
+          <div class="panel-header">
+            <div>
+              <h2>Odatlar</h2>
+              <p>Kunlik odatlaringiz</p>
+            </div>
+            <button class="ghost" id="addHabitBtn">+ Odat</button>
+          </div>
+          <div class="habit-list" id="habitList"></div>
+        </div>
+
+      </section>
+
+      <section class="grid hidden" id="planner">
+        <div class="panel wide">
+          <div class="panel-header">
+            <div>
+              <h2>Reja kalendari</h2>
+              <p>Kun/hafta/oy ko‘rinishi</p>
+            </div>
+            <div class="calendar-controls">
+              <button class="ghost" id="prevPeriod">◀</button>
+              <div id="calendarLabel" class="calendar-label">-</div>
+              <button class="ghost" id="nextPeriod">▶</button>
+            </div>
+          </div>
+          <div class="calendar" id="calendarGrid"></div>
+        </div>
+        <div class="panel">
+          <div class="panel-header">
+            <div>
+              <h2>Kunlik timeline</h2>
+              <p>Rejalashtirilgan segmentlar</p>
+            </div>
+          </div>
+          <div class="timeline" id="timeline"></div>
+        </div>
+      </section>
+
+      <section class="grid hidden" id="habits">
+        <div class="panel wide">
+          <div class="panel-header">
+            <div>
+              <h2>Odatlar</h2>
+              <p>Streak va kunlik monitoring</p>
+            </div>
+            <button class="primary" id="addHabitBtn2">+ Odat</button>
+          </div>
+          <div class="habit-list" id="habitListFull"></div>
+        </div>
+      </section>
+
+      <!-- Muddatlar bo‘limi olib tashlandi (start vaqt yetarli) -->
+
+      <section class="grid hidden" id="analytics">
+        <div class="panel wide">
+          <div class="panel-header">
+            <div>
+              <h2>Produktivlik trendi</h2>
+              <p>Oxirgi 14 kunlik line chart</p>
+            </div>
+          </div>
+          <canvas id="trendChart" height="220"></canvas>
+        </div>
+        <div class="panel">
+          <div class="panel-header">
+            <div>
+              <h2>Chuqur tahlil</h2>
+              <p>Vaqt va bajarilishlar</p>
+            </div>
+          </div>
+          <div class="stats">
+            <div class="stat-card">
+              <div class="label">Umumiy vaqt</div>
+              <div class="value" id="statsTime">0 soat</div>
+            </div>
+            <div class="stat-card">
+              <div class="label">O‘rtacha vaqt</div>
+              <div class="value" id="statsAvg">0 soat</div>
+            </div>
+            <div class="stat-card">
+              <div class="label">Reja bajarilishi</div>
+              <div class="value" id="statsPlan">0%</div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="grid hidden" id="settings">
+        <div class="panel wide">
+          <div class="panel-header">
+            <div>
+              <h2>Sozlamalar</h2>
+              <p>Mahalliy saqlash va ko'rinish</p>
+            </div>
+          </div>
+          <div class="settings">
+            <button class="ghost" id="exportData">Ma'lumotlarni eksport qilish (JSON)</button>
+            <button class="ghost" id="importData">JSON import qilish</button>
+            <button class="danger" id="resetData">Hammasini tozalash</button>
+          </div>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <div class="modal" id="taskModal">
+    <div class="modal-card">
+      <div class="modal-header">
+        <h3>Yangi vazifa</h3>
+        <button class="icon-btn" id="closeTaskModal">✕</button>
+      </div>
+      <div class="modal-body">
+        <label>Vazifa nomi</label>
+        <input type="text" id="taskName" placeholder="Masalan: Dizayn yakunlash" />
+
+        <div class="row">
+          <div>
+            <label>Boshlanish vaqti</label>
+            <input type="date" id="taskStartDate" />
+            <input type="time" id="taskStartTime" step="60" />
+            <div class="hint">Sana va vaqtni tanlang</div>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="ghost" id="cancelTask">Bekor qilish</button>
+        <button class="primary" id="saveTask">Saqlash</button>
+      </div>
+    </div>
+  </div>
+
+  <input type="file" id="importFile" accept="application/json" hidden />
+
+  <!-- Offline uchun chart.js ni lokal qilib uladik -->
+  <script src="assets/chart.umd.js"></script>
+  <script src="script.js"></script>
+</body>
+</html>
+
+
+
+
